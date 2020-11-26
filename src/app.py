@@ -51,15 +51,18 @@ def handle_hello():
     return jsonify(members), 200
 
 
-@app.route('/members/<int:index>', methods=['GET'])
+@app.route('/member/<int:index>', methods=['GET'])
 def get_person(index):
 
     # this is how you can use the Family datastructure by calling its methods
     person = jackson_family.get_member(index)
-    return jsonify(person), 200
+    if person:
+        return jsonify(person), 200
+    return 'Not Found', 404
+    
+    
 
-
-@app.route('/members', methods=['POST'])
+@app.route('/member', methods=['POST'])
 def new_person():
     cuerpo_peticion = request.data # texto plano
     cuerpo_peticion_dict = json.loads(cuerpo_peticion) # diccionario python
@@ -69,15 +72,16 @@ def new_person():
     return jsonify(members), 200
 
 
-@app.route('/members/<int:index>', methods=['DELETE'])
+@app.route('/member/<int:index>', methods=['DELETE'])
 def delete_person(index):
-    jackson_family.delete_member(index)
+    member = jackson_family.delete_member(index)
     # members = jackson_family.get_all_members()
-    body = {
-        "done": True
-    }
-
-    return jsonify(body), 200
+    if member:
+        body = {
+            "done": True
+        }
+        return jsonify(body), 200
+    return 'Not Found', 404
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
